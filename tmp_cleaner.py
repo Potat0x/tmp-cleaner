@@ -40,6 +40,7 @@ def confirm():
 
 
 def delete(files):
+
     confirming_answer = "usun"
     print(str(len(files)) + " plikow zostanie usunietych wpisz \"" + confirming_answer + "\"")
 
@@ -50,15 +51,30 @@ def delete(files):
         print("Pliki nie zostaly usuniete.")
 
 
+def specify_extensions():
+
+    default_extensions = ['*.o', '*.obj', '*.class', '*.out']
+
+    print("Domyslna lista rozszerzen (enter, aby użyć): " + ' '.join(default_extensions) +
+          "\nlub wprowadź teraz własną listę, oddzielając rozszerzenia spacjami (bez gwiazdek i kropek):")
+
+    custom_extensions = input()
+
+    if custom_extensions == "":
+        print("Zostanie uzyta domyślna lista.")
+        return default_extensions
+    else:
+        print("Zostanie uzyta lista użytkownika.")
+        return ["*." + ext for ext in custom_extensions.split()]
+
+
 def main():
 
-    exts = ['*.exe', '*.o']
+    extensions = specify_extensions()
 
-    print("Pliki z rozszerzeniami " + ' '.join(exts) + " zostana usuniete.")
+    print("Pliki z rozszerzeniami " + ' '.join(extensions) + " zostana usuniete.")
 
-    # files = list_files(exts)
-    # files = list_files(exts, '../..')
-    files = list_files(exts, '../..')
+    files = list_files(extensions, '../..')
 
     if len(files) != 0:
         print_list(files)
@@ -69,6 +85,7 @@ def main():
             print("Zadne pliki nie zostaly usuniete.")
     else:
         print("Nie znaleziono pasujacych plikow.")
+
 
 if __name__ == "__main__":
     main()
