@@ -55,13 +55,13 @@ def specify_extensions():
 
     default_extensions = ['*.o', '*.obj', '*.class', '*.out']
 
-    print("Domyslna lista rozszerzen (enter, aby użyć): " + ' '.join(default_extensions) +
-          "\nlub wprowadź teraz własną listę, oddzielając rozszerzenia spacjami (bez gwiazdek i kropek):")
+    print("Domyslna lista rozszerzen (enter, aby uzyc): " + ' '.join(default_extensions) +
+          "\nlub wprowadz teraz własną liste, oddzielajac rozszerzenia spacjami (bez gwiazdek i kropek):")
 
     custom_extensions = input()
 
     if custom_extensions == "":
-        print("Zostanie uzyta domyślna lista.")
+        print("Zostanie uzyta domyslna lista.")
         return default_extensions
     else:
         print("Zostanie uzyta lista użytkownika.")
@@ -74,7 +74,7 @@ def main():
 
     print("Pliki z rozszerzeniami " + ' '.join(extensions) + " zostana usuniete.")
 
-    files = list_files(extensions, '../..')
+    files = list_files(extensions)
 
     if len(files) != 0:
         print_list(files)
