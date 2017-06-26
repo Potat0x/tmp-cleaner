@@ -1,3 +1,4 @@
 *
 !.gitignore
+!LICENSE
 !tmp_cleaner.py
