@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 
 
 def delete_files(files):
@@ -30,7 +31,7 @@ def print_list(files):
 def confirm():
 
     while True:
-        print('\nUsunac? tak/nie')
+        print('Usunac? tak/nie')
         decision = input()
 
         if decision == 'tak':
@@ -53,7 +54,7 @@ def delete(files):
 
 def specify_extensions():
 
-    default_extensions = ['*.o', '*.obj', '*.class', '*.out']
+    default_extensions = ['*.o', '*.obj', '*.class', '*.out']   # EXTENSIONS LIST
 
     print("Domyslna lista rozszerzen (enter, aby uzyc): " + ' '.join(default_extensions) +
           "\nlub wprowadz teraz własną liste, oddzielajac rozszerzenia spacjami (bez gwiazdek i kropek):")
@@ -68,13 +69,36 @@ def specify_extensions():
         return ["*." + ext for ext in custom_extensions.split()]
 
 
+def prepare_directories():
+
+    if len(sys.argv) > 1:
+        directories = sys.argv
+        directories[0] = "."    # delete program name from directories list and add default . directory
+        print(directories)
+
+        for dirct in directories:
+            if not os.path.isdir(dirct):
+                print("\""+dirct+"\" nie jest katalogiem")
+                exit(1)
+
+        return list(set(directories))   # delete duplicates from list
+
+    else:
+        return ["."]
+
+
 def main():
+
+    directories = prepare_directories()
 
     extensions = specify_extensions()
 
     print("Pliki z rozszerzeniami " + ' '.join(extensions) + " zostana usuniete.")
 
-    files = list_files(extensions)
+    files = []
+
+    for directory in directories:
+        files += list_files(extensions, directory)
 
     if len(files) != 0:
         print_list(files)
