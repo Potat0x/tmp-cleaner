@@ -8,6 +8,7 @@ def delete_files(files):
     print("usuwam: ")
     for file in files:
         print(file)
+        os.remove(file)
 
 
 def list_files(extensions, path="."):
