@@ -6,9 +6,17 @@ import sys
 def delete_files(files):
 
     print("usuwam: ")
+    undeleted = []
+
     for file in files:
-        print(file)
-        os.remove(file)
+        print("    "+file)
+        try:
+            os.remove(file)
+        except Exception as exc:
+            print("Blad usuwania pliku: "+str(exc))
+            undeleted.append(file)
+
+    return undeleted
 
 
 def list_files(extensions, path="."):
@@ -25,24 +33,24 @@ def print_list(files):
 
     max_len = len(max(files, key=len))
     total_size = 0
-    print('Plik'.ljust(max_len + 3, ' ') + "Rozmiar (b)")
+    print("Plik".ljust(max_len + 3 + 4, ' ') + "Rozmiar (b)")
     for filename in files:
-        print(filename.ljust(max_len + 3, ' ') + str(os.stat(filename).st_size))
+        print("    "+filename.ljust(max_len + 3, ' ') + str(os.stat(filename).st_size))
         total_size += os.stat(filename).st_size
 
-    print("\nLiczba plikow: ".ljust(max_len + 3 + 1, ' ') + str(len(files)))
-    print("Calkowity rozmiar (b): ".ljust(max_len + 3, ' ') + str(total_size))
+    print("\nLiczba plikow: ".ljust(max_len + 3 + 4 + 1, ' ') + str(len(files)))
+    print("Calkowity rozmiar (b): ".ljust(max_len + 3 + 4, ' ') + str(total_size))
 
 
 def confirm():
 
     while True:
-        print('Usunac? tak/nie')
+        print("Usunac? tak/nie")
         decision = input()
 
-        if decision == 'tak':
+        if decision == "tak":
             return True
-        elif decision == 'nie':
+        elif decision == "nie":
             return False
 
 
@@ -52,8 +60,19 @@ def delete(files):
     print(str(len(files)) + " plikow zostanie usunietych wpisz \"" + confirming_answer + "\"")
 
     if confirming_answer == input():
-        delete_files(files)
-        print("\npliki zostaly usuniete.")
+        undeleted = delete_files(files)
+
+        if len(files) - len(undeleted) == 0:
+            print("zadne pliki nie zostaly usuniete.")
+        elif len(undeleted) == 0:
+                print("\npliki zostaly usuniete.")
+        else:
+            print("UWAGA: nie wszystkie pliki zostaly usuniete (" + str(len(undeleted)) + "):")
+            un_count = 1
+            for uf in undeleted:
+                print("    "+str(un_count)+". "+uf)
+                un_count += 1
+
     else:
         print("Pliki nie zostaly usuniete.")
 
