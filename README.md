@@ -1,6 +1,6 @@
 ## tmp-cleaner
 Small file cleaning tool.
-Search and delete files with specified extensions.
+**Recursively** search directories and delete files with specified extensions.
 
 ### How to use
 
