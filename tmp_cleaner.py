@@ -23,9 +23,14 @@ def list_files(extensions, path="."):
 def print_list(files):
 
     max_len = len(max(files, key=len))
+    total_size = 0
     print('Plik'.ljust(max_len + 3, ' ') + "Rozmiar (b)")
     for filename in files:
         print(filename.ljust(max_len + 3, ' ') + str(os.stat(filename).st_size))
+        total_size += os.stat(filename).st_size
+
+    print("\nLiczba plikow: ".ljust(max_len + 3 + 1, ' ') + str(len(files)))
+    print("Calkowity rozmiar (b): ".ljust(max_len + 3, ' ') + str(total_size))
 
 
 def confirm():
@@ -57,7 +62,7 @@ def specify_extensions():
     default_extensions = ['*.o', '*.obj', '*.class', '*.out']   # EXTENSIONS LIST
 
     print("Domyslna lista rozszerzen (enter, aby uzyc): " + ' '.join(default_extensions) +
-          "\nlub wprowadz teraz własną liste, oddzielajac rozszerzenia spacjami (bez gwiazdek i kropek):")
+          "\nlub wprowadz teraz wlasna liste, oddzielajac rozszerzenia spacjami (bez gwiazdek i kropek):")
 
     custom_extensions = input()
 
@@ -65,7 +70,7 @@ def specify_extensions():
         print("Zostanie uzyta domyslna lista.")
         return default_extensions
     else:
-        print("Zostanie uzyta lista użytkownika.")
+        print("Zostanie uzyta lista uzytkownika.")
         return ["*." + ext for ext in custom_extensions.split()]
 
 
@@ -73,32 +78,62 @@ def prepare_directories():
 
     if len(sys.argv) > 1:
         directories = sys.argv
-        directories[0] = "."    # delete program name from directories list and add default . directory
-        print(directories)
+        directories.pop(0)
+
+        result = []
+
+        print("Wybrane katalogi: ")
 
         for dirct in directories:
-            if not os.path.isdir(dirct):
-                print("\""+dirct+"\" nie jest katalogiem")
-                exit(1)
 
-        return list(set(directories))   # delete duplicates from list
+            cut_size = 0
+            for i in range(len(dirct)-1, -1, -1):
+                if dirct[i] == "\\":
+                    cut_size += 1
+                else:
+                    break
+
+            if cut_size > 0:
+                dirct = dirct[:-cut_size]
+
+            if not os.path.isdir(dirct):
+                print("Blad: \""+dirct+"\" nie jest katalogiem")
+                exit(1)
+            else:
+                result.append(dirct)
+
+        result = list(set(result))
+        result.sort()
+
+        for dirct in result:
+            print(dirct)
+
+        return result   # delete duplicates from list
 
     else:
         return ["."]
 
 
+def create_filelist(directories, extensions):
+
+    files = []
+    for directory in directories:
+        files += list_files(extensions, directory)
+
+    files = list(set(files))
+    files.sort()
+
+    return files
+
+
 def main():
 
     directories = prepare_directories()
-
     extensions = specify_extensions()
 
     print("Pliki z rozszerzeniami " + ' '.join(extensions) + " zostana usuniete.")
 
-    files = []
-
-    for directory in directories:
-        files += list_files(extensions, directory)
+    files = create_filelist(directories, extensions)
 
     if len(files) != 0:
         print_list(files)
@@ -107,6 +142,7 @@ def main():
             delete(files)
         else:
             print("Zadne pliki nie zostaly usuniete.")
+
     else:
         print("Nie znaleziono pasujacych plikow.")
 
